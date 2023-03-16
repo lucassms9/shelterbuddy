@@ -8,6 +8,7 @@ export const LIST_ANIMALS = gql`
           id
           name
           color
+          photoUrl
           animalType {
             name
           }
