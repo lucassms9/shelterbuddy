@@ -13,7 +13,7 @@ import { ArrowForwardIos } from "@mui/icons-material";
 
 const MobileList = ({ animals }: { animals?: Maybe<AnimalsConnection> }) => {
   return (
-    <Box>
+    <Box marginTop="30px">
       {animals?.edges?.map((row, index) => {
         const renderImage =
           row.node.photoUrl || "/assets/images/pet_placeholder.png";
@@ -55,7 +55,7 @@ const MobileList = ({ animals }: { animals?: Maybe<AnimalsConnection> }) => {
                 <Typography color="var(--dark-gray-color)">
                   Gender:{" "}
                   <Typography component="span" color="var(--black-color)">
-                    {row.node?.sex?.name || ''}
+                    {row.node?.sex?.name || ""}
                   </Typography>
                 </Typography>
                 <Typography color="var(--dark-gray-color)">

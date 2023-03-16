@@ -22,6 +22,7 @@ import { useLazyQuery } from "@apollo/client";
 import { LIST_ANIMALS } from "./queries";
 import { Query, QueryAnimalsArgs, SortEnumType } from "./__generated__/graphql";
 import { getCursor } from "./utils/utils";
+import { Grid } from "./styles";
 
 const App = () => {
   const [value, setValue] = useState("");
@@ -93,8 +94,8 @@ const App = () => {
         <img src={logo} alt="Shelter Buddy logo" />
       </Box>
       <Card sx={{ minWidth: 275 }}>
-        <CardContent sx={{ minHeight: '50vh' }}>
-          <Box display="flex" flexWrap="wrap" justifyContent="space-between">
+        <CardContent sx={{ minHeight: "50vh" }}>
+          <Grid>
             <Box display="flex" alignItems="center" flex={1}>
               <Typography variant="h5">Your Animals</Typography>
               {!loading && (
@@ -113,7 +114,7 @@ const App = () => {
               )}
             </Box>
 
-            <Box display="flex" flex={0.5} justify-content="flex-end">
+            <Box display="flex" flex={1} justify-content="flex-end">
               <TextField
                 sx={{
                   minWidth: "100%",
@@ -132,9 +133,15 @@ const App = () => {
                 onChange={debouncedChangeHandler}
               />
             </Box>
-          </Box>
+          </Grid>
           {loading ? (
-            <Box flex={1} sx={{ minHeight: '50vh' }} display="flex" justifyContent="center" alignItems="center">
+            <Box
+              flex={1}
+              sx={{ minHeight: "50vh" }}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
               <CircularProgress />
             </Box>
           ) : (
