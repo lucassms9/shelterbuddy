@@ -9,7 +9,12 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { visuallyHidden } from "@mui/utils";
-import { AnimalsConnection, Maybe, SortEnumType } from "../../__generated__/graphql";
+import {
+  AnimalsConnection,
+  Maybe,
+  SortEnumType,
+} from "../../__generated__/graphql";
+import { Avatar } from "@mui/material";
 
 export interface Data {
   animalType: string;
@@ -32,7 +37,7 @@ const headCells: readonly HeadCell[] = [
   {
     id: "name",
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: "Name",
   },
   {
@@ -73,15 +78,16 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     onRequestSort(property);
   };
 
-  const sortDirection = order === SortEnumType.Asc ? 'asc' : 'desc';
+  const sortDirection = order === SortEnumType.Asc ? "asc" : "desc";
 
   return (
     <TableHead>
       <TableRow>
+        <TableCell></TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
+            align="left"
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? sortDirection : false}
           >
@@ -93,7 +99,9 @@ function EnhancedTableHead(props: EnhancedTableProps) {
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === SortEnumType.Desc ? "sorted descending" : "sorted ascending"}
+                  {order === SortEnumType.Desc
+                    ? "sorted descending"
+                    : "sorted ascending"}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -115,37 +123,6 @@ export default function EnhancedTable({
   orderBy: string;
   handleRequestSort: (property: keyof Data) => void;
 }) {
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: readonly string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - (animals?.edges?.length || 0))
-      : 0;
-
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ width: "100%", mb: 2 }}>
@@ -153,7 +130,7 @@ export default function EnhancedTable({
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
+            size="medium"
           >
             <EnhancedTableHead
               order={order}
@@ -165,32 +142,41 @@ export default function EnhancedTable({
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.node.name || "")}
                     role="checkbox"
                     tabIndex={-1}
                     key={row.node.name}
                   >
-                    <TableCell component="th" scope="row" padding="none">
+                    <TableCell
+                      align="left"
+                      component="th"
+                      scope="row"
+                      padding="none"
+                    >
+                      <Avatar
+                        alt="Remy Sharp"
+                        src={
+                          row.node.photoUrl ||
+                          "/assets/images/pet_placeholder.png"
+                        }
+                      />
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      component="th"
+                      scope="row"
+                      padding="none"
+                    >
                       {row.node.name}
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell align="left">
                       {row.node.animalType.name}
                     </TableCell>
-                    <TableCell align="right">{row.node.breed.name}</TableCell>
-                    <TableCell align="right">{row.node.sex?.name}</TableCell>
-                    <TableCell align="right">{row.node.color}</TableCell>
+                    <TableCell align="left">{row.node.breed.name}</TableCell>
+                    <TableCell align="left">{row.node.sex?.name}</TableCell>
+                    <TableCell align="left">{row.node.color}</TableCell>
                   </TableRow>
                 );
               })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </TableContainer>
