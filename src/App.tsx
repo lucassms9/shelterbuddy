@@ -34,7 +34,7 @@ const App = () => {
   const [orderBy, setOrderBy] = useState<keyof Data>("name");
 
   const handleOrderItem = useMemo(() => {
-    if (orderBy === "animalType" || orderBy === "breed") {
+    if (orderBy === "animalType" || orderBy === "breed" || orderBy === "sex") {
       return {
         [orderBy]: {
           name: order,
