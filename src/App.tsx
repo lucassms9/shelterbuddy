@@ -93,7 +93,7 @@ const App = () => {
         <img src={logo} alt="Shelter Buddy logo" />
       </Box>
       <Card sx={{ minWidth: 275 }}>
-        <CardContent>
+        <CardContent sx={{ minHeight: '50vh' }}>
           <Box display="flex" flexWrap="wrap" justifyContent="space-between">
             <Box display="flex" alignItems="center" flex={1}>
               <Typography variant="h5">Your Animals</Typography>
@@ -134,7 +134,7 @@ const App = () => {
             </Box>
           </Box>
           {loading ? (
-            <Box display="flex" justifyContent="center" alignItems="center">
+            <Box flex={1} sx={{ minHeight: '50vh' }} display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
             </Box>
           ) : (

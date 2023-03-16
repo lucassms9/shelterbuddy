@@ -14,7 +14,8 @@ import {
   Maybe,
   SortEnumType,
 } from "../../__generated__/graphql";
-import { Avatar } from "@mui/material";
+import { Avatar, Button } from "@mui/material";
+import { ArrowForwardIos } from "@mui/icons-material";
 
 export interface Data {
   animalType: string;
@@ -107,6 +108,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             </TableSortLabel>
           </TableCell>
         ))}
+        <TableCell></TableCell>
       </TableRow>
     </TableHead>
   );
@@ -128,9 +130,14 @@ export default function EnhancedTable({
       <Box sx={{ width: "100%", mb: 2 }}>
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size="medium"
+            sx={{
+              minWidth: 750,
+              borderSpacing: "0px 12px",
+              borderCollapse: "separate",
+              border: "none",
+            }}
           >
             <EnhancedTableHead
               order={order}
@@ -139,41 +146,88 @@ export default function EnhancedTable({
             />
             <TableBody>
               {animals?.edges?.map((row, index) => {
+                const renderImage =
+                  row.node.photoUrl || "/assets/images/pet_placeholder.png";
                 return (
                   <TableRow
                     hover
                     role="checkbox"
                     tabIndex={-1}
                     key={row.node.name}
+                    sx={{
+                      backgroundColor: "var(--light-gray-color)",
+                    }}
                   >
                     <TableCell
                       align="left"
                       component="th"
                       scope="row"
-                      padding="none"
+                      padding="normal"
+                      sx={{
+                        borderBottom: "none",
+                      }}
                     >
-                      <Avatar
-                        alt="Remy Sharp"
-                        src={
-                          row.node.photoUrl ||
-                          "/assets/images/pet_placeholder.png"
-                        }
-                      />
+                      <Avatar alt="Remy Sharp" src={renderImage} />
                     </TableCell>
                     <TableCell
+                      sx={{
+                        borderBottom: "none",
+                      }}
                       align="left"
-                      component="th"
-                      scope="row"
-                      padding="none"
+                      padding="normal"
                     >
                       {row.node.name}
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell
+                      sx={{
+                        borderBottom: "none",
+                      }}
+                      padding="normal"
+                      align="left"
+                    >
                       {row.node.animalType.name}
                     </TableCell>
-                    <TableCell align="left">{row.node.breed.name}</TableCell>
-                    <TableCell align="left">{row.node.sex?.name}</TableCell>
-                    <TableCell align="left">{row.node.color}</TableCell>
+                    <TableCell
+                      sx={{
+                        borderBottom: "none",
+                      }}
+                      padding="normal"
+                      align="left"
+                    >
+                      {row.node.breed.name}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        borderBottom: "none",
+                      }}
+                      padding="normal"
+                      align="left"
+                    >
+                      {row.node.sex?.name}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        borderBottom: "none",
+                      }}
+                      padding="normal"
+                      align="left"
+                    >
+                      {row.node.color}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        borderBottom: "none",
+                      }}
+                      padding="normal"
+                      align="left"
+                    >
+                      <Button
+                        variant="text"
+                        endIcon={<ArrowForwardIos width="24px" height="24px" />}
+                      >
+                        Detail
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 );
               })}
