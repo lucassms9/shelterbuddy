@@ -9,17 +9,17 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { visuallyHidden } from "@mui/utils";
-import { AnimalsConnection, Maybe } from "../../__generated__/graphql";
+import { AnimalsConnection, Maybe, SortEnumType } from "../../__generated__/graphql";
 
-interface Data {
-  type: string;
+export interface Data {
+  animalType: string;
   breed: string;
-  gender: string;
+  sex: string;
   name: string;
   color: string;
 }
 
-type Order = "asc" | "desc";
+export type Order = "asc" | "desc";
 
 interface HeadCell {
   disablePadding: boolean;
@@ -36,7 +36,7 @@ const headCells: readonly HeadCell[] = [
     label: "Name",
   },
   {
-    id: "type",
+    id: "animalType",
     numeric: false,
     disablePadding: false,
     label: "Type",
@@ -48,7 +48,7 @@ const headCells: readonly HeadCell[] = [
     label: "Breed",
   },
   {
-    id: "gender",
+    id: "sex",
     numeric: false,
     disablePadding: false,
     label: "Gender",
@@ -62,20 +62,18 @@ const headCells: readonly HeadCell[] = [
 ];
 
 interface EnhancedTableProps {
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
-  order: Order;
+  onRequestSort: (property: keyof Data) => void;
+  order: SortEnumType;
   orderBy: string;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { order, orderBy, onRequestSort } = props;
-  const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+  const createSortHandler = (property: keyof Data) => () => {
+    onRequestSort(property);
+  };
+
+  const sortDirection = order === SortEnumType.Asc ? 'asc' : 'desc';
 
   return (
     <TableHead>
@@ -85,17 +83,17 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             key={headCell.id}
             align={headCell.numeric ? "right" : "left"}
             padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
+            sortDirection={orderBy === headCell.id ? sortDirection : false}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
+              direction={orderBy === headCell.id ? sortDirection : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                  {order === SortEnumType.Desc ? "sorted descending" : "sorted ascending"}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -108,26 +106,19 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 export default function EnhancedTable({
   animals,
+  order,
+  orderBy,
+  handleRequestSort,
 }: {
   animals?: Maybe<AnimalsConnection>;
+  order: SortEnumType;
+  orderBy: string;
+  handleRequestSort: (property: keyof Data) => void;
 }) {
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => {
-    console.log({ property });
-    const isAsc = orderBy === property && order === "asc";
-    console.log({ isAsc });
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
 
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);

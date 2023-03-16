@@ -12,9 +12,9 @@ import {
   useTheme,
   CircularProgress,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import logo from "./assets/images/logo.svg";
-import TableContent from "./component/Table";
+import TableContent, { Data } from "./component/Table";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MobileList from "./component/Table/MobileList";
 
@@ -30,45 +30,56 @@ const App = () => {
 
   const [cursorStartPage, setCursorStartPage] = useState("");
   const [page, setPage] = useState(1);
+  const [order, setOrder] = useState<SortEnumType>(SortEnumType.Asc);
+  const [orderBy, setOrderBy] = useState<keyof Data>("name");
 
-  const [getAnimal, { loading, error, data, refetch }] = useLazyQuery<
-    Query,
-    QueryAnimalsArgs
-  >(LIST_ANIMALS, {
-    variables: {
-      order: [
-        {
-          name: SortEnumType.Asc,
+  const handleOrderItem = useMemo(() => {
+    if (orderBy === "animalType" || orderBy === "breed") {
+      return {
+        [orderBy]: {
+          name: order,
         },
-      ],
-      where: {
-        name: {
-          contains: value,
+      };
+    }
+    return {
+      [orderBy]: order,
+    };
+  }, [order, orderBy]);
+
+  const [getAnimal, { loading, data }] = useLazyQuery<Query, QueryAnimalsArgs>(
+    LIST_ANIMALS,
+    {
+      variables: {
+        order: [handleOrderItem],
+        where: {
+          name: {
+            contains: value,
+          },
         },
+        after: cursorStartPage,
       },
-      after: cursorStartPage,
-    },
-  });
+    }
+  );
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
   };
 
-  const debouncedChangeHandler = useCallback(debounce(changeHandler, 500), []);
+  const debouncedChangeHandler = debounce(changeHandler, 500);
+
+  const handleRequestSort = (property: keyof Data) => {
+    const isAsc = orderBy === property && order === SortEnumType.Asc;
+    setOrder(isAsc ? SortEnumType.Desc : SortEnumType.Asc);
+    setOrderBy(property);
+  };
 
   useEffect(() => {
     getAnimal();
   }, [getAnimal]);
 
   useEffect(() => {
-    // setCursorStartPage(data?.animals?.pageInfo.startCursor || "");
-    console.log(data);
-  }, [data]);
-  useEffect(() => {
-    // setCursorStartPage(data?.animals?.pageInfo.startCursor || "");
     const cursor = getCursor(page, 10);
     setCursorStartPage(cursor);
-    // refetch()
   }, [page]);
 
   return (
@@ -129,7 +140,12 @@ const App = () => {
           ) : (
             <>
               {matches ? (
-                <TableContent animals={data?.animals} />
+                <TableContent
+                  order={order}
+                  orderBy={orderBy}
+                  animals={data?.animals}
+                  handleRequestSort={handleRequestSort}
+                />
               ) : (
                 <MobileList animals={data?.animals} />
               )}
