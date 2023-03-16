@@ -4,13 +4,15 @@ import {
   Card,
   CardContent,
   Container,
+  debounce,
   InputAdornment,
   Pagination,
   TextField,
   Typography,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import logo from "./assets/images/logo.svg";
 import TableContent from "./component/Table";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -22,7 +24,7 @@ import { Query, QueryAnimalsArgs, SortEnumType } from "./__generated__/graphql";
 import { getCursor } from "./utils/utils";
 
 const App = () => {
-  const [value, setValue] = useState("123");
+  const [value, setValue] = useState("");
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("md"));
 
@@ -41,12 +43,18 @@ const App = () => {
       ],
       where: {
         name: {
-          contains: "",
+          contains: value,
         },
       },
-      ...(cursorStartPage && { after: cursorStartPage }),
+      after: cursorStartPage,
     },
   });
+
+  const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+  };
+
+  const debouncedChangeHandler = useCallback(debounce(changeHandler, 500), []);
 
   useEffect(() => {
     getAnimal();
@@ -78,19 +86,22 @@ const App = () => {
           <Box display="flex" flexWrap="wrap" justifyContent="space-between">
             <Box display="flex" alignItems="center" flex={1}>
               <Typography variant="h5">Your Animals</Typography>
-              <Box
-                width="41px"
-                height="25px"
-                display="flex"
-                justifyContent="center"
-                borderRadius="100px"
-                color="#fff"
-                marginLeft="4px"
-                sx={{ backgroundColor: "var(--orange-color)" }}
-              >
-                <Typography>{data?.animals?.totalCount}</Typography>
-              </Box>
+              {!loading && (
+                <Box
+                  width="41px"
+                  height="25px"
+                  display="flex"
+                  justifyContent="center"
+                  borderRadius="100px"
+                  color="white"
+                  marginLeft="4px"
+                  sx={{ backgroundColor: "var(--orange-color)" }}
+                >
+                  <Typography>{data?.animals?.totalCount}</Typography>
+                </Box>
+              )}
             </Box>
+
             <Box display="flex" flex={0.5} justify-content="flex-end">
               <TextField
                 sx={{
@@ -107,19 +118,22 @@ const App = () => {
                 placeholder="Search an animal by name"
                 disabled={false}
                 variant="outlined"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
+                onChange={debouncedChangeHandler}
               />
             </Box>
           </Box>
-          {data?.animals && (
-            <Box>
+          {loading ? (
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
               {matches ? (
-                <TableContent animals={data.animals} />
+                <TableContent animals={data?.animals} />
               ) : (
                 <MobileList animals={data?.animals} />
               )}
-            </Box>
+            </>
           )}
 
           <Pagination
