@@ -5,20 +5,63 @@ import {
   CardContent,
   Container,
   InputAdornment,
+  Pagination,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "./assets/images/logo.svg";
 import TableContent from "./component/Table";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MobileList from "./component/Table/MobileList";
 
+import { useLazyQuery } from "@apollo/client";
+import { LIST_ANIMALS } from "./queries";
+import { Query, QueryAnimalsArgs, SortEnumType } from "./__generated__/graphql";
+import { getCursor } from "./utils/utils";
+
 const App = () => {
   const [value, setValue] = useState("123");
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("md"));
+
+  const [cursorStartPage, setCursorStartPage] = useState("");
+  const [page, setPage] = useState(1);
+
+  const [getAnimal, { loading, error, data, refetch }] = useLazyQuery<
+    Query,
+    QueryAnimalsArgs
+  >(LIST_ANIMALS, {
+    variables: {
+      order: [
+        {
+          name: SortEnumType.Asc,
+        },
+      ],
+      where: {
+        name: {
+          contains: "",
+        },
+      },
+      ...(cursorStartPage && { after: cursorStartPage }),
+    },
+  });
+
+  useEffect(() => {
+    getAnimal();
+  }, [getAnimal]);
+
+  useEffect(() => {
+    // setCursorStartPage(data?.animals?.pageInfo.startCursor || "");
+    console.log(data);
+  }, [data]);
+  useEffect(() => {
+    // setCursorStartPage(data?.animals?.pageInfo.startCursor || "");
+    const cursor = getCursor(page, 10);
+    setCursorStartPage(cursor);
+    // refetch()
+  }, [page]);
 
   return (
     <Container component="main">
@@ -45,7 +88,7 @@ const App = () => {
                 marginLeft="4px"
                 sx={{ backgroundColor: "var(--orange-color)" }}
               >
-                <Typography>100</Typography>
+                <Typography>{data?.animals?.totalCount}</Typography>
               </Box>
             </Box>
             <Box display="flex" flex={0.5} justify-content="flex-end">
@@ -69,7 +112,28 @@ const App = () => {
               />
             </Box>
           </Box>
-          {matches ? <TableContent /> : <MobileList />}
+          {data?.animals && (
+            <Box>
+              {matches ? (
+                <TableContent animals={data.animals} />
+              ) : (
+                <MobileList animals={data?.animals} />
+              )}
+            </Box>
+          )}
+
+          <Pagination
+            hideNextButton
+            hidePrevButton
+            boundaryCount={10}
+            count={Math.ceil((data?.animals?.totalCount || 0) / 10)}
+            color="primary"
+            page={page}
+            onChange={(event, number) => {
+              event.preventDefault();
+              setPage(number);
+            }}
+          />
         </CardContent>
       </Card>
     </Container>
