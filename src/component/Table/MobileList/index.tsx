@@ -5,9 +5,10 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { AnimalsConnection, Maybe } from "../../../__generated__/graphql";
 
-const MobileList = () => {
+const MobileList = ({ animals }: { animals?: Maybe<AnimalsConnection> }) => {
   return (
     <Box>
       <Accordion>
