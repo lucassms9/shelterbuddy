@@ -225,7 +225,7 @@ export default function EnhancedTable({
                         variant="text"
                         endIcon={<ArrowForwardIos width="24px" height="24px" />}
                       >
-                        Detail
+                        Details
                       </Button>
                     </TableCell>
                   </TableRow>
