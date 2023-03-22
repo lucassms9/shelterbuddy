@@ -1,14 +1,10 @@
-import { Search } from "@mui/icons-material";
 import {
   Box,
   Card,
   CardContent,
   Container,
   debounce,
-  InputAdornment,
   Pagination,
-  TextField,
-  Typography,
   useTheme,
   CircularProgress,
 } from "@mui/material";
@@ -16,13 +12,13 @@ import { useEffect, useMemo, useState } from "react";
 import logo from "./assets/images/logo.svg";
 import TableContent, { Data } from "./component/Table";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import MobileList from "./component/Table/MobileList";
+import MobileList from "./component/MobileList";
 
 import { useLazyQuery } from "@apollo/client";
 import { LIST_ANIMALS } from "./queries";
 import { Query, QueryAnimalsArgs, SortEnumType } from "./__generated__/graphql";
 import { getCursor } from "./utils/utils";
-import { Grid } from "./styles";
+import { Header } from "./component/Header";
 
 const App = () => {
   const [value, setValue] = useState("");
@@ -95,45 +91,11 @@ const App = () => {
       </Box>
       <Card sx={{ minWidth: 275 }}>
         <CardContent sx={{ minHeight: "50vh" }}>
-          <Grid>
-            <Box display="flex" alignItems="center" flex={1}>
-              <Typography variant="h5">Your Animals</Typography>
-              {!loading && (
-                <Box
-                  width="41px"
-                  height="25px"
-                  display="flex"
-                  justifyContent="center"
-                  borderRadius="100px"
-                  color="white"
-                  marginLeft="4px"
-                  sx={{ backgroundColor: "var(--orange-color)" }}
-                >
-                  <Typography>{data?.animals?.totalCount}</Typography>
-                </Box>
-              )}
-            </Box>
-
-            <Box display="flex" flex={1} justify-content="flex-end">
-              <TextField
-                sx={{
-                  minWidth: "100%",
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
-                label=""
-                placeholder="Search an animal by name"
-                disabled={false}
-                variant="outlined"
-                onChange={debouncedChangeHandler}
-              />
-            </Box>
-          </Grid>
+          <Header
+            loading={loading}
+            debouncedChangeHandler={debouncedChangeHandler}
+            totalCount={data?.animals?.totalCount || 0}
+          />
           {loading ? (
             <Box
               flex={1}
@@ -145,18 +107,12 @@ const App = () => {
               <CircularProgress />
             </Box>
           ) : (
-            <>
-              {matches ? (
-                <TableContent
-                  order={order}
-                  orderBy={orderBy}
-                  animals={data?.animals}
-                  handleRequestSort={handleRequestSort}
-                />
-              ) : (
-                <MobileList animals={data?.animals} />
-              )}
-            </>
+            <TableContent
+              handleRequestSort={handleRequestSort}
+              order={order}
+              orderBy={orderBy}
+              animals={data?.animals}
+            />
           )}
 
           <Pagination

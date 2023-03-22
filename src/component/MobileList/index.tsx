@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { AnimalsConnection, Maybe } from "../../../__generated__/graphql";
+import { AnimalsConnection, Maybe } from "../../__generated__/graphql";
 import { ArrowForwardIos } from "@mui/icons-material";
 
 const MobileList = ({ animals }: { animals?: Maybe<AnimalsConnection> }) => {
