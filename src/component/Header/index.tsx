@@ -14,7 +14,7 @@ const Header = ({
   debouncedChangeHandler,
 }: HeaderProps) => {
   return (
-    <Grid>
+    <Grid data-testid="header-content">
       <Box display="flex" alignItems="center" flex={1}>
         <Typography variant="h5">Your Animals</Typography>
         {!loading && (
@@ -56,4 +56,4 @@ const Header = ({
   );
 };
 
-export { Header };
+export default Header;

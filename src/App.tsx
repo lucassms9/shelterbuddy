@@ -5,25 +5,20 @@ import {
   Container,
   debounce,
   Pagination,
-  useTheme,
   CircularProgress,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import logo from "./assets/images/logo.svg";
 import TableContent, { Data } from "./component/Table";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import MobileList from "./component/MobileList";
 
 import { useLazyQuery } from "@apollo/client";
 import { LIST_ANIMALS } from "./queries";
 import { Query, QueryAnimalsArgs, SortEnumType } from "./__generated__/graphql";
 import { getCursor } from "./utils/utils";
-import { Header } from "./component/Header";
+import Header from "./component/Header";
 
 const App = () => {
   const [value, setValue] = useState("");
-  const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.up("md"));
 
   const [cursorStartPage, setCursorStartPage] = useState("");
   const [page, setPage] = useState(1);
