@@ -13,7 +13,7 @@ import { ArrowForwardIos } from "@mui/icons-material";
 
 const MobileList = ({ animals }: { animals?: Maybe<AnimalsConnection> }) => {
   return (
-    <Box marginTop="30px">
+    <Box marginTop="30px"  data-testid="table-mobile">
       {animals?.edges?.map((row, index) => {
         const renderImage =
           row.node.photoUrl || "/assets/images/pet_placeholder.png";

@@ -126,7 +126,7 @@ export default function EnhancedTable({
   handleRequestSort: (property: keyof Data) => void;
 }) {
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%" }} data-testid="table-web">
       <Box sx={{ width: "100%", mb: 2 }}>
         <TableContainer>
           <Table

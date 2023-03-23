@@ -28,7 +28,7 @@ const Header = ({
             marginLeft="4px"
             sx={{ backgroundColor: "var(--orange-color)" }}
           >
-            <Typography>{totalCount}</Typography>
+            <Typography data-testid="total-count">{totalCount}</Typography>
           </Box>
         )}
       </Box>

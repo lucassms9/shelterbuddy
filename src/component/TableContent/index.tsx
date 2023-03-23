@@ -21,6 +21,7 @@ const TableContent = ({
 }: TableContentProps) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("md"));
+  
   return (
     <>
       {matches ? (
@@ -37,4 +38,4 @@ const TableContent = ({
   );
 };
 
-export { TableContent };
+export default TableContent;
